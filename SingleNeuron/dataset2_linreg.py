@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
+
 np.random.seed(17)
 np.set_printoptions(precision=5, linewidth=160, suppress=True)
+
 
 class DataSet:
     __x_range = [0, 2]
@@ -29,16 +31,19 @@ class DataSet:
         return y,x
 
     @classmethod
-    def plot_data(cls):
+    def plot_data(cls, show=True):
         y,x = cls.get_data()
-        y_GT,x_GT = cls.get_ground_truth_data()
+        y_GT, x_GT = cls.get_ground_truth_data()
         plt.plot(x[0], y[0], 'o', x_GT[0], y_GT[0],'r--')
         plt.legend(['data','ground_truth (unknown)'])
+        if show:
+            plt.show()
 
     @classmethod
     def plot_model(cls, predict_f):  
-        cls.plot_data()
+        cls.plot_data(show=False)
         x = np.linspace(cls.__x_range[0],cls.__x_range[1], 100).reshape((1,-1))
         y = predict_f(x)
         plt.plot(x[0], y[0], '-')
         plt.legend(['data','ground_truth (unknown)', 'model'])
+        plt.show()

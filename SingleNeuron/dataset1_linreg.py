@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
+
+
 np.random.seed(17)
 np.set_printoptions(precision=5, linewidth=160, suppress=True)
 
