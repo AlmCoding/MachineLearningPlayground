@@ -29,7 +29,7 @@ def sigmoid(x):
 
 
 def d_sigmoid(x):
-    return 1/(1+np.exp(-x))**2
+    return sigmoid(x)*(1-sigmoid(x))
 
 
 if __name__ == '__main__':
@@ -51,7 +51,3 @@ if __name__ == '__main__':
     y = d_sigmoid(x)
     plt.plot(x, y)
     plt.show()
-
-
-
-
