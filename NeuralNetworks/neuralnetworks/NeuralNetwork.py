@@ -78,7 +78,7 @@ class NeuralNetwork:
         a_out = a[self.L]
         return a_out
 
-    def bp(self, x, y):
+    def bp_l2(self, x, y):
         """
         Backpropagation. Uses the current parameters W, b
         Args:
@@ -109,7 +109,38 @@ class NeuralNetwork:
             dW[l] = dCdz[l].dot(a[l - 1].T)
         return dW, db
 
-    def gd_learn(self, iter_num, l_rate, x, y):
+    def bp_ce(self, x, y):
+        """
+        Backpropagation. Uses the current parameters W, b
+        Args:
+            x = np.array of size self.layers[0] x N (contains N input vectors from the training set)
+            y = np.array of size self.layers[L] x N (contains N output vectors from the training set)
+        Returns:
+            dW = dictionary corresponding to W, where each corresponding key contains a matrix of the
+                 same size, eg, W[i].shape = dW[i].shape for all i. It contains the partial derivatives
+                 of the cost function with respect to each entry entry of W.
+            db = dictionary corresponding to b, where each corresponding key contains a matrix of the
+                 same size, eg, b[i].shape = bW[i].shape for all i. It contains the partial derivatives
+                 of the cost function with respect to each entry entry of b.
+
+        """
+        a, z = self.fp(x)
+        L = self.L
+
+        dCdz = {L: (a[L] - y) / a[L] / (1 - a[L]) * self.d_act_out(z[L])}
+        for l in range(L - 1, 0, -1):
+            dCdz[l] = self.W[l + 1].T.dot(dCdz[l + 1]) * self.d_act_hid(z[l])
+
+        db = {}
+        for l in range(1, L + 1):
+            db[l] = np.sum(dCdz[l], axis=1).reshape((-1, 1))
+
+        dW = {}
+        for l in range(1, L + 1):
+            dW[l] = dCdz[l].dot(a[l - 1].T)
+        return dW, db
+
+    def gd_learn(self, iter_num, l_rate, x, y, backpropagation, lbd=0):
         """
         Performs gradient descent learning.
         iter_num = number of iterations of GD
@@ -118,14 +149,7 @@ class NeuralNetwork:
         y = nparray with the training outputs
         """
         for i in range(iter_num):
-            dW, db = self.bp(x, y)
+            dW, db = backpropagation(x, y)
             for l in range(1, self.L + 1):
-                self.W[l] = self.W[l] - l_rate*dW[l]
-                self.b[l] = self.b[l] - l_rate*db[l]
-
-
-
-
-
-
-
+                self.W[l] = self.W[l] - l_rate * (dW[l] + 2*lbd*self.W[l])
+                self.b[l] = self.b[l] - l_rate * db[l]

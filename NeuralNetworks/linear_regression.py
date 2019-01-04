@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from dataset2_linreg import DataSet
 from neuralnetworks.NeuralNetwork import NeuralNetwork
@@ -17,7 +16,7 @@ plt.show()
 print('Cost: %f' % cf.l2_cost(x_D, y_D, NN.output))
 
 
-NN.gd_learn(100000, 0.02, x_D, y_D)
+NN.gd_learn(100000, 0.02, x_D, y_D, NN.bp_l2)
 
 # plot and compute cost
 DataSet.plot_model(NN.output)
